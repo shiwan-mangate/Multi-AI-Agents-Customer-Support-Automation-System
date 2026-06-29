@@ -1,15 +1,11 @@
 # =============================================================================
 # Multi-Agent Customer Support Platform
-# Production Dockerfile
 # =============================================================================
 
-# -----------------------------------------------------------------------------
-# Base Image
-# -----------------------------------------------------------------------------
 FROM python:3.11-slim
 
 # -----------------------------------------------------------------------------
-# Python Configuration
+# Python
 # -----------------------------------------------------------------------------
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
@@ -21,7 +17,7 @@ ENV TRANSFORMERS_CACHE=/models/huggingface
 ENV HF_HUB_CACHE=/models/huggingface
 
 # -----------------------------------------------------------------------------
-# System Dependencies
+# System Packages
 # -----------------------------------------------------------------------------
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
@@ -41,7 +37,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 # -----------------------------------------------------------------------------
-# Install Python Dependencies
+# Install Dependencies
 # -----------------------------------------------------------------------------
 COPY requirements.txt .
 
@@ -49,21 +45,21 @@ RUN pip install --upgrade pip setuptools wheel
 RUN pip install --no-cache-dir -r requirements.txt
 
 # -----------------------------------------------------------------------------
-# Copy Application
+# Copy Source Code
 # -----------------------------------------------------------------------------
 COPY . .
 
 # -----------------------------------------------------------------------------
-# Hugging Face Model Cache
+# Hugging Face Cache
 # -----------------------------------------------------------------------------
 RUN mkdir -p /models/huggingface
 
 # -----------------------------------------------------------------------------
-# Expose Port
+# Port
 # -----------------------------------------------------------------------------
 EXPOSE 7860
 
 # -----------------------------------------------------------------------------
-# Start FastAPI
+# Start API
 # -----------------------------------------------------------------------------
-CMD ["sh", "-c", "uvicorn api.main:app --host 0.0.0.0 --port ${PORT:-7860}"]
+CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "7860"]
