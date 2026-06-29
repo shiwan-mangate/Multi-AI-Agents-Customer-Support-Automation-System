@@ -87,6 +87,20 @@ def create_app() -> FastAPI:
     app.add_exception_handler(ValidationError, pydantic_validation_handler)
     app.add_exception_handler(Exception, global_exception_handler)
 
+    @app.get("/", tags=["System"])
+    def root():
+        """
+        Root endpoint for Hugging Face, browsers, and uptime checks.
+        """
+        return {
+            "message": "Multi-Agent Customer Support Platform is running.",
+            "status": "healthy",
+            "docs": "/docs",
+            "health": "/health",
+            "version": api_settings.API_VERSION,
+            "environment": api_settings.ENVIRONMENT,
+        }
+
 
     @app.get("/health", tags=["System"], summary="Load Balancer Health Check")
     def health():
