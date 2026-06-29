@@ -5,7 +5,8 @@ from typing import Tuple
 import fasttext
 import langdetect
 from langdetect.lang_detect_exception import LangDetectException
-
+from pathlib import Path
+import urllib.request
 # Internal Architecture
 from layer_3.detection.script_detector import ScriptDetector, Scripts
 from layer_3.schemas.detection_result import DetectionResult
@@ -21,14 +22,33 @@ class LanguageDetector:
 
     def __init__(self, fasttext_model_path: str = "models/lid.176.ftz"):
         self.script_detector = ScriptDetector()
-        
-        # Fail Fast. A detection service without its primary model is a zombie.
+
+        model_path = Path(fasttext_model_path)
+
+        # Create directory if needed
+        model_path.parent.mkdir(parents=True, exist_ok=True)
+
+        # Download the model if it's missing
+        if not model_path.exists():
+            logger.warning("fastText model not found. Downloading...")
+
+            model_url = (
+                "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz"
+            )
+
+            urllib.request.urlretrieve(model_url, model_path)
+
+            logger.info("fastText model downloaded successfully.")
+
         try:
-            self.fasttext_model = fasttext.load_model(str(fasttext_model_path))
-            logger.info(f"Successfully loaded fastText model from {fasttext_model_path}")
+            self.fasttext_model = fasttext.load_model(str(model_path))
+            logger.info(f"Successfully loaded fastText model from {model_path}")
+
         except Exception as e:
-            logger.error(f"CRITICAL: Failed to load fastText model from {fasttext_model_path}. Error: {e}")
-            raise RuntimeError(f"LanguageDetector cannot start without fastText model: {e}")
+            logger.error(f"Failed to load fastText model: {e}")
+            raise RuntimeError(
+                f"LanguageDetector cannot start without fastText model: {e}"
+            )
 
     def detect(self, text: str) -> DetectionResult:
         """
