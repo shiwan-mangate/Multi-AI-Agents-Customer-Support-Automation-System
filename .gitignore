@@ -1,0 +1,42 @@
+# Environment
+.env
+**/.env
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# GitHub
+.github/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# HuggingFace cache
+models/huggingface/
+
+# Docker volumes
+customer_db_data/
+faq_db_data/
+
+# Local databases
+*.db
+*.sqlite3
+
+# Database backups
+database/backup/

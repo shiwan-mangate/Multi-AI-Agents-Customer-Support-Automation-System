@@ -1,0 +1,207 @@
+services:
+
+  ###########################################################################
+  # Main PostgreSQL Database
+  ###########################################################################
+
+  customer-db:
+    image: postgres:17
+    container_name: customer_support_db
+
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass9325
+      POSTGRES_DB: customer_support_ai
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - customer_db_data:/var/lib/postgresql/data
+
+      # Backup
+      - ./database/backup/customer_support_ai.backup:/backup/customer_support_ai.backup:ro
+
+      # Restore Script
+      - ./docker/postgres/customer/restore.sh:/docker-entrypoint-initdb.d/restore.sh:ro
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d customer_support_ai"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+
+
+  ###########################################################################
+  # FAQ Vector Database
+  ###########################################################################
+
+  faq-db:
+    image: pgvector/pgvector:pg17
+    container_name: faq_vector_db
+
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: faq_vector_db
+
+    ports:
+      - "5433:5432"
+
+    volumes:
+      - faq_db_data:/var/lib/postgresql/data
+
+      # Backup
+      - ./database/backup/faq_vector_db.backup:/backup/faq_vector_db.backup:ro
+
+      # Restore Script
+      - ./docker/postgres/faq/restore.sh:/docker-entrypoint-initdb.d/restore.sh:ro
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d faq_vector_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+
+
+  ###########################################################################
+  # Build the application image ONCE
+  ###########################################################################
+
+  api:
+
+    build:
+      context: .
+
+    image: multi-agent-platform:latest
+
+    container_name: crm_api
+
+    restart: unless-stopped
+
+    working_dir: /app
+
+    env_file:
+      - .env
+
+    environment:
+      PYTHONPATH: /app
+
+    depends_on:
+      customer-db:
+        condition: service_healthy
+
+      faq-db:
+        condition: service_healthy
+
+    ports:
+      - "8000:8000"
+
+    volumes:
+      - ./models:/app/models:ro
+      - hf_models:/models/huggingface
+
+    command:
+      [
+        "uvicorn",
+        "api.main:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000"
+      ]
+
+
+
+  ###########################################################################
+  # CRM Background Worker
+  ###########################################################################
+
+  crm-worker:
+
+    image: multi-agent-platform:latest
+
+    container_name: crm_worker
+
+    restart: unless-stopped
+
+    working_dir: /app
+
+    env_file:
+      - .env
+
+    environment:
+      PYTHONPATH: /app
+
+    depends_on:
+      customer-db:
+        condition: service_healthy
+
+      faq-db:
+        condition: service_healthy
+
+    volumes:
+      - ./models:/app/models:ro
+      - hf_models:/models/huggingface
+
+    command:
+      [
+        "python",
+        "platform_orchestration/scripts/run_worker.py"
+      ]
+
+
+
+  ###########################################################################
+  # Proactive Background Worker
+  ###########################################################################
+
+  proactive-worker:
+
+    image: multi-agent-platform:latest
+
+    container_name: proactive_worker
+
+    restart: unless-stopped
+
+    working_dir: /app
+
+    env_file:
+      - .env
+
+    environment:
+      PYTHONPATH: /app
+
+    depends_on:
+      customer-db:
+        condition: service_healthy
+
+      faq-db:
+        condition: service_healthy
+
+    volumes:
+      - ./models:/app/models:ro
+      - hf_models:/models/huggingface
+
+    command:
+      [
+        "python",
+        "platform_orchestration/scripts/run_proactive.py"
+      ]
+
+
+
+###########################################################################
+# Persistent Volumes
+###########################################################################
+
+volumes:
+  customer_db_data:
+  faq_db_data:
+  hf_models:
