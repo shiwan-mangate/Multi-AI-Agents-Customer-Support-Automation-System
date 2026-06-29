@@ -64,7 +64,12 @@ class AuditRepository:
             self.session.add(audit_record)
             
             # 2. Commit the savepoint. If this succeeds, it merges into the outer transaction.
-            self.session.commit()
+            try:
+                self.session.commit()
+            except Exception:
+                self.session.rollback()
+                raise
+                
             return True
 
         except Exception:

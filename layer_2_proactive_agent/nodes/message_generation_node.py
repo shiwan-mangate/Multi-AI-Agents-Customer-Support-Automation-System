@@ -72,25 +72,26 @@ def message_generation_node(state: ProactiveState) -> Dict[str, Any]:
 
         # 2. Persist the Outreach to the Registry with safe transaction handling
         with SessionLocal() as db:
-            try:
-                repo = ProactiveOutreachRepository(session=db)
-                suppression_service = SuppressionService(repo=repo)
-                
-                # Defensive guard to extract action whether it is an Enum object or a raw string
-                action_obj = getattr(decision, "action", None)
-                action_value = action_obj.value if hasattr(action_obj, "value") else str(action_obj)
+            repo = ProactiveOutreachRepository(session=db)
+            suppression_service = SuppressionService(repo=repo)
+            
+            # Defensive guard to extract action whether it is an Enum object or a raw string
+            action_obj = getattr(decision, "action", None)
+            action_value = action_obj.value if hasattr(action_obj, "value") else str(action_obj)
 
-                record = suppression_service.create_outreach_record(
-                    workflow_id=workflow_id,
-                    signal_id=signal.signal_id,
-                    customer_id=signal.customer_id,
-                    signal_type=signal.signal_type,
-                    decision=action_value,
-                )
-                suppression_service.save_outreach(record)
+            record = suppression_service.create_outreach_record(
+                workflow_id=workflow_id,
+                signal_id=signal.signal_id,
+                customer_id=signal.customer_id,
+                signal_type=signal.signal_type,
+                decision=action_value,
+            )
+            suppression_service.save_outreach(record)
+            
+            try:
                 db.commit()
             except Exception:
-                db.rollback()  # Prevent dirty session states on database failure
+                db.rollback()
                 raise
 
         logger.info(

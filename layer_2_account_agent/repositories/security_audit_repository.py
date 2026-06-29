@@ -41,7 +41,12 @@ class SecurityAuditRepository:
                 logger.warning("%s | No rows affected.", error_message)
                 return False
 
-            self.session.commit()
+            try:
+                self.session.commit()
+            except Exception:
+                self.session.rollback()
+                raise
+                
             return True
 
         except Exception:
@@ -82,7 +87,13 @@ class SecurityAuditRepository:
             )
 
             self.session.add(audit_record)
-            self.session.commit()
+            
+            try:
+                self.session.commit()
+            except Exception:
+                self.session.rollback()
+                raise
+                
             return True
 
         except Exception:
@@ -105,7 +116,13 @@ class SecurityAuditRepository:
             )
 
             self.session.add(new_record)
-            self.session.commit()
+            
+            try:
+                self.session.commit()
+            except Exception:
+                self.session.rollback()
+                raise
+                
             return True
 
         except IntegrityError:

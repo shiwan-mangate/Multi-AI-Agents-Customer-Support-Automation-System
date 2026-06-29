@@ -132,7 +132,11 @@ class CRMEventConsumer:
                     batch_size=self.batch_size,
                 )
 
-                session.commit()
+                try:
+                    session.commit()
+                except Exception:
+                    session.rollback()
+                    raise
 
                 for event in events:
                     session.expunge(event)
@@ -204,25 +208,32 @@ class CRMEventConsumer:
         event_id: str,
         error_msg: str,
     ) -> None:
-        now = datetime.now(UTC)
-        stmt = (
-            update(CRMEvent)
-            .where(CRMEvent.event_id == event_id)
-            .values(
-                status="DEAD",
-                last_error=(
-                    "Pydantic Validation Error: "
-                    f"{error_msg}"
-                ),
-                processed_at=now,
-                updated_at=now,  # Synchronized tracking metadata column maps securely
-                claimed_by=None,
-                claimed_at=None,
+        try:
+            now = datetime.now(UTC)
+            stmt = (
+                update(CRMEvent)
+                .where(CRMEvent.event_id == event_id)
+                .values(
+                    status="DEAD",
+                    last_error=(
+                        "Pydantic Validation Error: "
+                        f"{error_msg}"
+                    ),
+                    processed_at=now,
+                    updated_at=now,  # Synchronized tracking metadata column maps securely
+                    claimed_by=None,
+                    claimed_at=None,
+                )
             )
-        )
 
-        session.execute(stmt)
-        session.commit()
+            session.execute(stmt)
+            try:
+                session.commit()
+            except Exception:
+                session.rollback()
+                raise
+        except Exception :
+            session.rollback()
 
     def _run_maintenance_if_needed(
         self

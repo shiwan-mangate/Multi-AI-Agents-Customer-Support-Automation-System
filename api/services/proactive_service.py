@@ -207,7 +207,11 @@ class ProactiveService:
                             event_record.customer_id
                         )
                     
-                    self.container.db.commit()
+                    try:
+                        self.container.db.commit()
+                    except Exception:
+                        self.container.db.rollback()
+                        raise
 
                 except Exception as inner_e:
                     self.container.db.rollback()

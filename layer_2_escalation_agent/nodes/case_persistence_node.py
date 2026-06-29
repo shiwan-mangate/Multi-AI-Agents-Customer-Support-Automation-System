@@ -131,7 +131,11 @@ def case_persistence_node(
 
         # 5. Atomic Unit Commit Boundary
         if session:
-            session.commit()
+            try:
+                session.commit()
+            except Exception:
+                session.rollback()
+                raise
 
         state["audit_status"] = "persisted"
         state["holding_sent"] = True

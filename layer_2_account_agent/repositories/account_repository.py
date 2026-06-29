@@ -41,7 +41,12 @@ class AccountRepository:
                 logger.warning("%s | No rows affected.", error_message)
                 return False
 
-            self.session.commit()
+            try:
+                self.session.commit()
+            except Exception:
+                self.session.rollback()
+                raise
+                
             return True
 
         except Exception:

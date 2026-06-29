@@ -47,8 +47,7 @@ def main() -> None:
     )
 
     db_url = os.getenv(
-        "DATABASE_URL",
-        "postgresql://user:pass@localhost:5432/crm_db",
+        "DATABASE_URL"
     )
 
     engine = create_engine(
@@ -83,7 +82,11 @@ def main() -> None:
                 )
             )
 
-            session.commit()
+            try:
+                session.commit()
+            except Exception:
+                session.rollback()
+                raise
 
             if deleted_count > 0:
 

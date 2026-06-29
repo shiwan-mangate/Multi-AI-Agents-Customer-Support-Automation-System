@@ -60,7 +60,12 @@ class WorkflowRepository:
             )
 
             self.session.execute(upsert_stmt)
-            self.session.commit()
+            
+            try:
+                self.session.commit()
+            except Exception:
+                self.session.rollback()
+                raise
             
             logger.info(f"✅ DB | Successfully updated workflow {workflow_id} states.")
             
@@ -112,7 +117,11 @@ class WorkflowRepository:
                 "updated_at": func.now()
             }, synchronize_session=False)
             
-            self.session.commit()
+            try:
+                self.session.commit()
+            except Exception:
+                self.session.rollback()
+                raise
             
         except Exception as e:
             self.session.rollback()

@@ -114,7 +114,11 @@ def main():
                             crm_event = container.proactive_adapter.to_crm_event(output)
                             
                             container.crm_event_repository.create_event(crm_event)
-                            container.db.commit()
+                            try:
+                                container.db.commit()
+                            except Exception:
+                                container.db.rollback()
+                                raise
                             logger.info(f" Queued CRM Event for {signal.signal_id}")
 
                     except Exception as exc:

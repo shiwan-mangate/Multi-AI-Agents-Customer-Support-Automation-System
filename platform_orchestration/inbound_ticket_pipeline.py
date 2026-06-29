@@ -33,14 +33,19 @@ class InboundTicketPipeline:
     # ==========================================
     # 🟢 CRM INGESTION HELPER
     # ==========================================
-    def _trace(self,ticket_id: str,stage: str,status: str,details: str | None = None):
-        self.container.workflow_trace_repository.create(
-            ticket_id=ticket_id,
-            stage=stage,
-            status=status,
-            details=details
-        )
-        self.container.db.commit()
+    def _trace(self,ticket_id: str,stage: str,status: str,details: str | None = None,):
+        try:
+            self.container.workflow_trace_repository.create(
+                ticket_id=ticket_id,
+                stage=stage,
+                status=status,
+                details=details,
+            )
+            self.container.db.commit()
+
+        except Exception:
+            self.container.db.rollback()
+            raise
         
     def _enqueue_crm_event(self, agent_type: str, agent_output: dict, global_context: dict):
         """Passes specialist outputs through adapters and into the async CRM database queue."""
@@ -76,13 +81,19 @@ class InboundTicketPipeline:
             )
             
             self.container.crm_event_repository.create_event(validated_crm_event)
-            self.container.db.commit()
+            
+            try:
+                self.container.db.commit()
+            except Exception:
+                self.container.db.rollback()
+                raise
             
             logger.info(f"✅ CRM ASYNC HANDOFF | Queued event {validated_crm_event.event.event_id} for Ticket {validated_crm_event.ticket.ticket_id}")
             
         except Exception as e:
             self.container.db.rollback()
             logger.error(f"❌ CRM Handoff Failed: {e}")
+            raise e
 
     def process(self, data: dict) -> dict:
         logger.info("Initializing inbound pipeline processing sequence...")

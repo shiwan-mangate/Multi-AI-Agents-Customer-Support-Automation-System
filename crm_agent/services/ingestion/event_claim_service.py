@@ -1,5 +1,3 @@
-# crm_agent/services/ingestion/event_claim_service.py
-
 import logging
 from datetime import datetime, UTC, timedelta
 from typing import List
@@ -97,7 +95,11 @@ class EventClaimService:
             self.event_repo.session.execute(dead_stmt)
             
             # 3. Finalize transaction: commit changes
-            self.event_repo.session.commit()
+            try:
+                self.event_repo.session.commit()
+            except Exception:
+                self.event_repo.session.rollback()
+                raise
 
             released_count = result.rowcount or 0
             if released_count > 0:

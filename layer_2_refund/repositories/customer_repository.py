@@ -74,7 +74,11 @@ class CustomerRepository(AbstractCustomerRepository):
                 Customer.customer_id == customer_id
             ).update({"total_spent": new_total_spent})
 
-            self.session.commit()
+            try:
+                self.session.commit()
+            except Exception:
+                self.session.rollback()
+                raise
 
             return rowcount > 0
 

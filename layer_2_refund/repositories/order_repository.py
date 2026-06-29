@@ -76,7 +76,11 @@ class OrderRepository(
                 "order_status": status.value
             })
 
-            self.session.commit()
+            try:
+                self.session.commit()
+            except Exception:
+                self.session.rollback()
+                raise
 
             return rowcount > 0
 

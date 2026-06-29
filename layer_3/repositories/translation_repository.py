@@ -21,8 +21,6 @@ class TranslationRepository:
    
         self.db = db
 
-
-
     def create_record(self, record: TranslationRecord) -> TranslationRecordModel:
         """
         Stores the inbound translation immediately after a customer message is processed.
@@ -34,7 +32,13 @@ class TranslationRepository:
             db_record = TranslationRecordModel(**record_data)
             
             self.db.add(db_record)
-            self.db.commit()
+            
+            try:
+                self.db.commit()
+            except Exception:
+                self.db.rollback()
+                raise
+                
             self.db.refresh(db_record)
             
             logger.info(f"TranslationRecord created | Ticket={db_record.ticket_id}")
@@ -74,7 +78,12 @@ class TranslationRepository:
             record.response_translated = response_translated
             record.response_language = response_language
             
-            self.db.commit()
+            try:
+                self.db.commit()
+            except Exception:
+                self.db.rollback()
+                raise
+                
             logger.info(f"Outbound translation updated | Ticket={ticket_id}")
             return True
         except Exception as e:
@@ -95,7 +104,13 @@ class TranslationRepository:
 
         try:
             record.translation_success = False
-            self.db.commit()
+            
+            try:
+                self.db.commit()
+            except Exception:
+                self.db.rollback()
+                raise
+                
             logger.info(f"Translation marked as failed | Ticket={ticket_id}")
             return True
         except Exception as e:
@@ -113,7 +128,6 @@ class TranslationRepository:
         return result is not None
 
     # -------------------------------------------------------------------------
-
 
     def get_customer_history(self, customer_id: int) -> List[TranslationRecordModel]:
         """

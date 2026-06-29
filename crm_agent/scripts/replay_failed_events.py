@@ -52,8 +52,7 @@ def main() -> None:
     )
 
     db_url = os.getenv(
-        "DATABASE_URL",
-        "postgresql://user:pass@localhost:5432/crm_db",
+        "DATABASE_URL"
     )
 
     engine = create_engine(

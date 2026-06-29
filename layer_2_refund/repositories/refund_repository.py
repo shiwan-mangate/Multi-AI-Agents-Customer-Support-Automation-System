@@ -114,7 +114,12 @@ class RefundRepository:
             )
 
             self.session.execute(stmt)
-            self.session.commit()
+            
+            try:
+                self.session.commit()
+            except Exception:
+                self.session.rollback()
+                raise
 
             return True
 

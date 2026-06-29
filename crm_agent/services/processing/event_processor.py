@@ -60,7 +60,11 @@ class EventProcessor:
             )
 
             self.event_repo.mark_done(event_id)
-            self.session.commit()
+            try:
+                self.session.commit()
+            except Exception:
+                self.session.rollback()
+                raise
             return
 
         plan = self.router.build_processing_plan(event)
@@ -78,7 +82,11 @@ class EventProcessor:
                 final_error=plan.failure_reason or "Unknown route",
             )
             self.idempotency.mark_dead(event)
-            self.session.commit()
+            try:
+                self.session.commit()
+            except Exception:
+                self.session.rollback()
+                raise
             return
 
         try:
@@ -152,7 +160,11 @@ class EventProcessor:
 
             self.idempotency.mark_success(event)
             self.event_repo.mark_done(event_id)
-            self.session.commit()
+            try:
+                self.session.commit()
+            except Exception:
+                self.session.rollback()
+                raise
 
             logger.info(
                 "Processing completed | event_id=%s",
@@ -173,7 +185,11 @@ class EventProcessor:
                     event_id=event_id,
                     error_msg=str(e),
                 )
-                self.session.commit()
+                try:
+                    self.session.commit()
+                except Exception:
+                    self.session.rollback()
+                    raise
 
             except Exception as queue_error:
                 self.session.rollback()
