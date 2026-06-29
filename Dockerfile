@@ -15,7 +15,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV PIP_NO_CACHE_DIR=1
 
-# HuggingFace / Transformers Cache
+# Hugging Face Cache
 ENV HF_HOME=/models/huggingface
 ENV TRANSFORMERS_CACHE=/models/huggingface
 ENV HF_HUB_CACHE=/models/huggingface
@@ -46,27 +46,24 @@ WORKDIR /app
 COPY requirements.txt .
 
 RUN pip install --upgrade pip setuptools wheel
-
-RUN pip install --no-cache-dir -v -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # -----------------------------------------------------------------------------
-# Copy Application Source
+# Copy Application
 # -----------------------------------------------------------------------------
 COPY . .
 
 # -----------------------------------------------------------------------------
-# Create Persistent Model Cache
+# Hugging Face Model Cache
 # -----------------------------------------------------------------------------
 RUN mkdir -p /models/huggingface
 
 # -----------------------------------------------------------------------------
-# Expose FastAPI Port
+# Expose Port
 # -----------------------------------------------------------------------------
-EXPOSE 8000
+EXPOSE 7860
 
 # -----------------------------------------------------------------------------
-# Default Command
+# Start FastAPI
 # -----------------------------------------------------------------------------
-# Used by API container.
-# Worker containers override this in docker-compose.yml.
-CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "uvicorn api.main:app --host 0.0.0.0 --port ${PORT:-7860}"]
