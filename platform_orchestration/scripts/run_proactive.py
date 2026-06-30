@@ -4,8 +4,7 @@ import sys
 import os
 import uuid
 import time  # <-- Added for daemon sleeping
-import threading  # 🟢 FIX: Added for dummy server thread
-from http.server import BaseHTTPRequestHandler, HTTPServer  # 🟢 FIX: Added for dummy server
+from sqlalchemy import text # 🟢 FIX: Added for database keep-alive ping
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
@@ -20,28 +19,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger("proactive_scanner")
 
-# 🟢 FIX: Define the Dummy Web Server to satisfy Hugging Face health checks
-class HealthCheckHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/plain')
-        self.end_headers()
-        self.wfile.write(b"Worker is running!")
-    
-    # Suppress console logging for the health check so it doesn't spam your logs
-    def log_message(self, format, *args):
-        pass
-
-def run_dummy_server():
-    server = HTTPServer(('0.0.0.0', 7860), HealthCheckHandler)
-    server.serve_forever()
-# ---------------------------------------------------------
 
 def main():
-    # 🟢 FIX: Start the dummy server in a background thread before anything else
-    health_thread = threading.Thread(target=run_dummy_server, daemon=True)
-    health_thread.start()
-    logger.info("Dummy health check server started on port 7860 to prevent HF timeout.")
 
     logger.info("Initializing Dependency Container (One-Time Setup)...")
     
@@ -56,6 +35,18 @@ def main():
     # 🟢 Infinite Daemon Loop
     while True:
         try:
+            # 🟢 THE FIX: Keep-Alive Ping to prevent Neon from scaling to zero
+            # We use container.db here because you are still using the pre-bound session
+            # in your current DependencyContainer implementation.
+            try:
+                container.db.execute(text("SELECT 1"))
+                container.db.commit()
+                logger.debug("Neon Database keep-alive ping sent.")
+            except Exception as ping_exc:
+                logger.warning(f"Keep-alive ping failed (DB might be waking up): {ping_exc}")
+                # We do not rollback container.db here to avoid interfering with ongoing transactions
+                # The ping is purely to touch the connection wire.
+
             logger.info("Starting Proactive CRM Signal Scan...")
             raw_signals = signal_service.detect_signals()
             
