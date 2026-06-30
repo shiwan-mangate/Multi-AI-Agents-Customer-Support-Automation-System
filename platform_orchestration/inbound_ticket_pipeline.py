@@ -13,12 +13,11 @@ logger = logging.getLogger("inbound_ticket_pipeline")
 # ==========================================
 # 🟢 GLOBAL STATE HELPERS
 # ==========================================
+# 🔴 THE FIX: Removed clarification states so they do not skip CRM and Translation handoffs
 PAUSED_STATES = [
     "HUMAN_REVIEW_REQUIRED",
     "PENDING",
-    "PENDING_REVIEW",
-    "PENDING_CLARIFICATION",
-    "clarification_required"
+    "PENDING_REVIEW"
 ]
 
 def is_paused_status(status: str | None) -> bool:
