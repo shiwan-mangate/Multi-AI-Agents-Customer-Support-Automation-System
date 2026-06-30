@@ -24,7 +24,9 @@ def build_triage(container):
     
     # 2. Graph Compilation
     # ✅ FIX: Pass the shared platform checkpointer straight into the Triage graph compiler
-    container.triage_graph = build_triage_graph(checkpointer=container.checkpointer)
+    container.triage_graph = build_triage_graph(
+    checkpointer=None
+)
     
     # 3. Router Orchestration
     container.specialist_router = SpecialistRouter(container)

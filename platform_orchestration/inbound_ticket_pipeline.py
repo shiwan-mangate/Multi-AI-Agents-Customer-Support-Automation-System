@@ -4,7 +4,7 @@ from platform_orchestration.dependency_container import DependencyContainer
 from layer_2_triage.mapper.triage_output_adapter import build_triage_output
 from langgraph.types import Command
 import time
-
+import psycopg
 # Must import the CRM Schema to perform the quarantine validation check!
 from crm_agent.schemas.crm_event import CRMResolvedEvent
 
@@ -181,8 +181,39 @@ class InboundTicketPipeline:
 
         triage_state = self.container.triage_state_factory.create_triage_state(triage_input)
         config = {"configurable": {"thread_id": supervisor_result.ticket_id}}
-        
-        final_triage_state = self.container.triage_graph.invoke(triage_state, config=config)
+
+        logger.warning("Pool Stats: %s", self.container.pg_pool.get_stats())
+
+        conn = self.container.pg_pool.getconn()
+
+        logger.warning(
+            "CHECKPOINT TEST CONNECTION OK"
+        )
+        self.container.pg_pool.putconn(conn)
+
+
+        logger.warning("=== TESTING PSYCOPG POOL ===")
+
+        try:
+            with self.container.pg_pool.connection() as conn:
+                with conn.cursor() as cur:
+                    cur.execute("SELECT current_database(), now();")
+                    logger.warning(cur.fetchone())
+        except Exception:
+            logger.exception("POOL FAILED")
+
+        try:
+            logger.warning("BEFORE INVOKE")
+            logger.warning("POOL ID = %s", id(self.container.pg_pool))
+            logger.warning("CHECKPOINTER ID = %s", id(self.container.checkpointer))
+
+            final_triage_state = self.container.triage_graph.invoke(triage_state, config=config)
+
+            logger.warning("AFTER INVOKE")
+        except psycopg.errors.AdminShutdown:
+            logger.warning("Checkpoint connection died. Rebuilding container.")
+            raise
+
         triage_output = build_triage_output(final_triage_state)
         self._trace(
             ticket_id,

@@ -68,14 +68,17 @@ class TranscriptRepository:
                 created_at=datetime.now(UTC),
             )
             logger.warning(
-                "DB INTENT = %s",
-                event.analytics.intent if event.analytics else None
-            )
+            "ADDING TRANSCRIPT TO DATABASE | ticket=%s",
+            event.ticket.ticket_id,
+        )
 
             self.session.add(transcript)
-            
-            # 2. CRITICAL FIX: Explicit commit to save the async CRM event to the database
-            self.session.flush()
+            self.session.commit()
+            logger.warning(
+                "TRANSCRIPT COMMITTED | ticket=%s",
+                event.ticket.ticket_id,
+            )
+            self.session.refresh(transcript)
             
             return transcript
             
@@ -196,7 +199,7 @@ class TranscriptRepository:
             if hasattr(transcript, "updated_at"):
                 transcript.updated_at = datetime.now(UTC)
 
-            self.session.flush()
+            self.session.commit()
             self.session.refresh(transcript)
 
             logger.info(

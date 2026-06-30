@@ -2,7 +2,7 @@ from langgraph.graph import StateGraph, START, END
 
 # ❌ REMOVED: MemorySaver import
 # ❌ REMOVED: DependencyContainer import (we will inject it instead)
-
+import logging
 from layer_2_triage.graphs.triage_state import TriageState
 from layer_2_triage.graphs.nodes.fetch_customer_node import fetch_customer_node
 from layer_2_triage.graphs.nodes.fetch_order_node import fetch_order_node
@@ -13,6 +13,7 @@ from layer_2_triage.graphs.nodes.sla_node import sla_node
 from layer_2_triage.graphs.nodes.escalation_check_node import escalation_check_node
 from layer_2_triage.graphs.nodes.dispatch_node import dispatch_node
 
+logger = logging.getLogger(__name__)
 # ✅ ADDED: checkpointer as a required parameter
 def build_triage_graph(checkpointer):
     """
@@ -48,6 +49,9 @@ def build_triage_graph(checkpointer):
 
     # 3. Compilation with Persistent Postgres Checkpointer
     # ✅ INJECTED: Uses the shared checkpointer passed from the container
-    triage_app = builder.compile(checkpointer=checkpointer)
+    if checkpointer is None:
+        triage_app = builder.compile()
+    else:
+        triage_app = builder.compile(checkpointer=checkpointer)
     
     return triage_app

@@ -19,7 +19,8 @@ import os
 from psycopg_pool import ConnectionPool
 from langgraph.checkpoint.postgres import PostgresSaver
 from platform_orchestration.repositories.workflow_trace_repository import WorkflowTraceRepository
-
+import logging
+logger = logging.getLogger("dependency_container")
 
 class DependencyContainer:
     def __init__(self):
@@ -35,20 +36,31 @@ class DependencyContainer:
 
         self.pg_pool = ConnectionPool(
             conninfo=main_db_uri,
-            kwargs={"autocommit": True},
+            min_size=1,
+            max_size=5,
+            timeout=30,
+            max_idle=300,
+            reconnect_timeout=10,
+            kwargs={
+        "autocommit": True,
+        "connect_timeout": 10,
+    },
         )
-        
-        # ✅ FIX: Initialize the shared checkpointer BEFORE any builders run
+        logger.warning(self.pg_pool.get_stats())
+    
         self.checkpointer = PostgresSaver(self.pg_pool)
-        self.checkpointer.setup()  
 
-        # Initialize FAQ Agent Knowledge Pool (Port 5433)
+        logger.warning("POOL ID = %s", id(self.pg_pool))
+        logger.warning("CHECKPOINTER ID = %s", id(self.checkpointer))
+
+        self.checkpointer.setup()  
+        logger.warning("CHECKPOINTER CREATED")
+
+  
         faq_db_uri = os.environ["FAQ_DATABASE_URL"]
         self.faq_vector_pool = ConnectionPool(conninfo=faq_db_uri)
 
-        # =========================================================
-        # 2. COMPONENT BUILDERS (Safe now because checkpointer exists!)
-        # =========================================================
+
         build_crm(self)       
         build_triage(self)   
         build_layer3(self)   

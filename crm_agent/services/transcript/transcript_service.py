@@ -42,10 +42,10 @@ class TranscriptService:
 
         ticket_id = event.ticket.ticket_id
 
-        logger.debug(
-            "Attempting transcript persistence | ticket_id=%s",
-            ticket_id,
-        )
+        logger.warning(
+        "TRANSCRIPT SERVICE CALLED | ticket=%s",
+        ticket_id,
+    )
 
         self._validate_event(event)
 
