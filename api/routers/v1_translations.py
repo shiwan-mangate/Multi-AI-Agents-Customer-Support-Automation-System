@@ -17,7 +17,7 @@ router = APIRouter(prefix="/api/v1/translations", tags=["Translations (Layer 3)"
 def get_translation_service() -> TranslationApiService:
     return TranslationApiService(get_container())
 
-# FIXED: Cleaned up URL from /dashboard/operations to /analytics
+
 @router.get(
     "/analytics",
     name="get_translation_analytics",

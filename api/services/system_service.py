@@ -41,6 +41,10 @@ class SystemService:
 
     def get_active_workflows(self, limit: int = 100, request_id: str = "unknown") -> ActiveWorkflowsResponse:
         """Fetches all non-terminal workflows currently in the orchestration layer."""
+        try:
+            self.container.db.rollback()
+        except Exception:
+            pass
         logger.info(f"[{request_id}] Fetching active workflows list (limit: {limit})")
         
         try:

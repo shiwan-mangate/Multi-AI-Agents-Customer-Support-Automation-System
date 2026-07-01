@@ -95,6 +95,11 @@ class InboundTicketPipeline:
             raise e
 
     def process(self, data: dict) -> dict:
+        try:
+            self.container.db.rollback() 
+        except Exception:
+            pass
+
         logger.info("Initializing inbound pipeline processing sequence...")
 
         def enum_safe(val):

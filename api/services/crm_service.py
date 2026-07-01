@@ -94,6 +94,10 @@ class CRMService:
 
     def get_active_churn_alerts(self, request_id: str, limit: int = 50) -> List[ChurnAlertResponse]:
         """Fetches all open/pending risk alerts for the dashboard."""
+        try:
+            self.container.db.rollback() 
+        except Exception:
+            pass
         logger.info(f"[{request_id}] Fetching active churn alerts")
         try:
             # We utilize the existing pending delivery method to grab active alerts
