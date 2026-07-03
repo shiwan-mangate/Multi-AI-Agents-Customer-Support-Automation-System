@@ -25,6 +25,11 @@ class SystemService:
 
         try:
            
+            try:
+                self.container.db.rollback() 
+            except Exception:
+                pass
+            
             self.container.db.execute(text("SELECT 1"))
             db_status = "connected"
             system_state = "healthy"
