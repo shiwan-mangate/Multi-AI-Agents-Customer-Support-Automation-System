@@ -116,7 +116,7 @@ class TranslationApiService:
                 target_language=request.target_language,
                 translation_success=result.translation_success,
                 translated_text=result.translated_text,
-                provider_used=result.provider_used
+                provider_used=getattr(result, "provider_used", "Helsinki-NLP")
             )
         except HTTPException:
             raise
