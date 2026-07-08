@@ -1,6 +1,10 @@
 import logging
 from fastapi import HTTPException, status
-from platform_orchestration.dependency_container import DependencyContainer
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from platform_orchestration.dependency_container import DependencyContainer
+
 
 # Import your existing Layer 3 components
 from layer_3.analytics.language_dashboard_service import LanguageDashboardService
@@ -17,7 +21,7 @@ from api.schemas.translation_responses import (
 logger = logging.getLogger("api_translation_service")
 
 class TranslationApiService:
-    def __init__(self, container: DependencyContainer):
+    def __init__(self, container: "DependencyContainer"):
         self.container = container
         self.repo = self.container.translation_repository
         
@@ -81,7 +85,7 @@ class TranslationApiService:
                     response_language=r.response_language,
                     created_at=r.created_at
                 ) for r in records
-            ][:limit]
+            ][:limit] # 🟢 THE FIX: Safely slice the list to enforce the limit
             
             return CustomerTranslationHistoryResponse(
                 customer_id=customer_id,
@@ -116,7 +120,7 @@ class TranslationApiService:
                 target_language=request.target_language,
                 translation_success=result.translation_success,
                 translated_text=result.translated_text,
-                provider_used=getattr(result, "provider_used", "Helsinki-NLP")
+                provider_used=result.provider_used
             )
         except HTTPException:
             raise

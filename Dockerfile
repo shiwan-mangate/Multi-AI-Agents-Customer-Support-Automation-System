@@ -28,6 +28,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     libpq-dev \
     postgresql-client \
+    dos2unix \ 
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -52,6 +53,7 @@ COPY . .
 # -----------------------------------------------------------------------------
 # Make Entrypoint Executable
 # -----------------------------------------------------------------------------
+RUN dos2unix entrypoint.sh
 RUN chmod +x entrypoint.sh
 
 # -----------------------------------------------------------------------------
