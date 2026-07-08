@@ -81,7 +81,7 @@ class TranslationApiService:
                     response_language=r.response_language,
                     created_at=r.created_at
                 ) for r in records
-            ][:limit] # 🟢 THE FIX: Safely slice the list to enforce the limit
+            ][:limit]
             
             return CustomerTranslationHistoryResponse(
                 customer_id=customer_id,
