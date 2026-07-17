@@ -296,4 +296,494 @@ Operating independently of the reactive request pipeline, the Proactive Agent co
 
 ---
 
+# 🏛️ Layer 0 — Input Processing & Language Intelligence
+
+<div align="center">
+
+<img src="images/Inbound-pipeline.png" width="95%">
+
+</div>
+
+---
+
+Layer 0 serves as the platform's intelligent entry point. Every customer request—regardless of channel or language—is standardized into a canonical ticket before entering the AI orchestration pipeline.
+
+Rather than exposing downstream agents to inconsistent payloads, Layer 0 performs normalization, language understanding, customer enrichment, and translation to guarantee that every subsequent workflow receives a clean, validated contract.
+
+### Responsibilities
+
+- Request Validation
+- Payload Normalization
+- Customer Context Enrichment
+- Language Detection
+- Entity Protection
+- Translation Pipeline
+- Translation Validation
+- Translation Cache
+- Unified Ticket Generation
+
+### Workflow
+
+```
+Incoming Request
+        │
+        ▼
+Request Validation
+        │
+        ▼
+Language Detection
+        │
+        ▼
+Entity Protection
+        │
+        ▼
+Translation Engine
+        │
+        ▼
+Translation Validation
+        │
+        ▼
+Translation Cache
+        │
+        ▼
+English Canonical Message
+        │
+        ▼
+Unified Ticket
+```
+
+### Highlights
+
+- Automatic multilingual support
+- Translation fallback strategy
+- Translation memory cache
+- Protected business entities
+- Standardized ticket schema
+- Zero downstream language dependency
+
+---
+
+# 🧠 Layer 1 — AI Supervisor Orchestrator
+
+Layer 1 functions as the decision-making brain of the platform.
+
+Instead of sending requests directly to business agents, every ticket first passes through the AI Supervisor, which determines customer intent, urgency, confidence, and routing strategy.
+
+The supervisor ensures that each request reaches the correct business workflow with the highest possible confidence.
+
+### Responsibilities
+
+- Intent Classification
+- Entity Extraction
+- Sentiment Analysis
+- Urgency Detection
+- Confidence Scoring
+- Intelligent Routing
+
+### Workflow
+
+```
+Unified Ticket
+        │
+        ▼
+Intent Classification
+        │
+        ▼
+Entity Extraction
+        │
+        ▼
+Sentiment Analysis
+        │
+        ▼
+Urgency Detection
+        │
+        ▼
+Confidence Scoring
+        │
+        ▼
+Route to Triage Engine
+```
+
+### Highlights
+
+- AI-based routing
+- Confidence-aware decisions
+- Business-aware orchestration
+- Standardized routing contract
+- Independent from business logic
+
+---
+
+# 🎯 Intelligent Triage Engine
+
+<div align="center">
+
+<img src="images/Triage-agent.png" width="95%">
+
+</div>
+
+---
+
+The Triage Engine enriches every request with business intelligence before handing it to a specialist AI agent.
+
+Instead of relying solely on the customer's latest message, the triage workflow retrieves customer history, previous tickets, SLA policies, and operational context to make informed routing decisions.
+
+### Responsibilities
+
+- Customer Profile Retrieval
+- Order Context Retrieval
+- Historical Interaction Analysis
+- Business Scoring
+- Priority Assignment
+- SLA Assignment
+- Escalation Policy Evaluation
+- Specialist Dispatch
+
+### Workflow
+
+```
+Customer Lookup
+        │
+        ▼
+Order Lookup
+        │
+        ▼
+History Analysis
+        │
+        ▼
+Business Scoring
+        │
+        ▼
+Priority Assignment
+        │
+        ▼
+SLA Assignment
+        │
+        ▼
+Escalation Check
+        │
+        ▼
+Specialist Dispatch
+```
+
+### Output
+
+The triage engine produces a fully enriched ticket containing:
+
+- Customer Profile
+- Order Information
+- Business Context
+- Priority
+- SLA
+- Escalation Flags
+- Recommended Specialist
+
+---
+
+# 🤖 Specialist Agent Layer
+
+Once the request has been enriched by the Triage Engine, it is dispatched to one of four specialized LangGraph workflows.
+
+Unlike monolithic chatbot systems, each specialist owns an independent workflow, dedicated business rules, repositories, policies, and response generation strategy.
+
+The specialist layer consists of:
+
+- 📚 FAQ Agent
+- 💰 Refund Agent
+- 🔐 Account Agent
+- 🚨 Escalation Agent
+
+Each workflow is independently checkpointed using PostgreSQL-backed LangGraph persistence, enabling resumable execution and enterprise-grade reliability.
+
+---
+
+# 📚 FAQ Agent
+
+<div align="center">
+
+<img src="images/FAQ-agent.png" width="95%">
+
+</div>
+
+---
+
+The FAQ Agent provides Retrieval-Augmented Generation (RAG) capabilities for knowledge-intensive customer queries.
+
+Instead of generating responses directly, the workflow validates the request, retrieves relevant knowledge, reranks results, expands contextual information, verifies the generated answer, and only responds when confidence thresholds are satisfied.
+
+### Responsibilities
+
+- Contract Validation
+- Query Understanding
+- Ambiguity Detection
+- Clarification Handling
+- Retrieval Strategy Selection
+- Vector Search
+- Candidate Re-ranking
+- Parent Context Expansion
+- Answer Generation
+- Answer Verification
+- Confidence Gate
+- Escalation Handoff
+
+### Workflow
+
+```
+Validate Request
+        │
+        ▼
+Understand Query
+        │
+        ▼
+Ambiguity Check
+        │
+        ├────► Clarification
+        │
+        ▼
+Knowledge Retrieval
+        │
+        ▼
+Re-ranking
+        │
+        ▼
+Context Expansion
+        │
+        ▼
+LLM Answer Generation
+        │
+        ▼
+Verification
+        │
+        ▼
+Confidence Gate
+      ┌──┴─────┐
+      ▼        ▼
+ Respond   Escalation
+```
+
+### Highlights
+
+- Retrieval-Augmented Generation
+- Vector Search using pgvector
+- Parent-child context retrieval
+- Confidence-aware routing
+- Knowledge gap detection
+
+---
+
+# 💰 Refund Agent
+
+<div align="center">
+
+<img src="images/Refund-agent.png" width="95%">
+
+</div>
+
+---
+
+The Refund Agent automates refund processing while enforcing business policies, preventing duplicate executions, and supporting human approval for sensitive refund requests.
+
+### Responsibilities
+
+- Duplicate Detection
+- Order Validation
+- Customer Validation
+- Refund Policy Evaluation
+- Human Approval
+- Refund Execution
+- Audit Logging
+
+### Workflow
+
+```
+Idempotency Check
+        │
+        ▼
+Order Lookup
+        │
+        ▼
+Customer Validation
+        │
+        ▼
+Policy Engine
+      ┌──┴───────────┐
+      ▼              ▼
+Execute        Escalation
+      │              │
+      ▼              ▼
+Human Review (if required)
+        │
+        ▼
+Refund Execution
+        │
+        ▼
+Audit Logging
+```
+
+### Highlights
+
+- Policy-driven automation
+- Duplicate protection
+- Human approval workflow
+- Transaction safety
+- Complete audit trail
+
+---
+
+# 🔐 Account Agent
+
+<div align="center">
+
+<img src="images/account-agent.png" width="95%">
+
+</div>
+
+---
+
+The Account Agent manages customer identity, account security, authentication workflows, billing operations, and account recovery.
+
+The workflow emphasizes security by performing identity verification, abuse detection, risk analysis, and policy enforcement before executing any sensitive account operation.
+
+### Responsibilities
+
+- Issue Classification
+- Identity Resolution
+- Account Context Retrieval
+- Abuse Detection
+- Risk Assessment
+- Verification Policy
+- Idempotency Protection
+- Password Reset
+- Account Unlock
+- Invoice Retrieval
+- Billing History
+- Security Escalation
+- Audit Logging
+
+### Workflow
+
+```
+Validate Request
+        │
+        ▼
+Issue Classification
+        │
+        ▼
+Identity Resolution
+        │
+        ▼
+Account Context
+        │
+        ▼
+Risk Assessment
+        │
+        ▼
+Verification Policy
+        │
+        ▼
+Execution Decision
+      ┌────┼─────────────┐
+      ▼    ▼             ▼
+Reset Unlock Billing Security
+      │    │             │
+      └────┴─────────────┘
+              │
+              ▼
+        Audit Logging
+              │
+              ▼
+       Response Generation
+```
+
+### Highlights
+
+- Identity verification
+- Fraud prevention
+- Risk-aware execution
+- Security-first workflow
+- Policy-based automation
+
+---
+
+# 🚨 Escalation Agent
+
+<div align="center">
+
+<img src="images/escalation-agent.png" width="95%">
+
+</div>
+
+---
+
+The Escalation Agent manages high-risk customer interactions requiring business oversight or human approval.
+
+Rather than immediately forwarding every complex case, the workflow performs trigger assessment, customer enrichment, risk scoring, intelligent routing, and automated holding responses before creating a structured case for human reviewers.
+
+### Responsibilities
+
+- Contract Validation
+- Trigger Assessment
+- Duplicate Case Detection
+- Customer Context
+- Conversation Context
+- Risk Scoring
+- Intelligent Routing
+- Holding Response Generation
+- Human Brief Generation
+- Human Review
+- Notification Dispatch
+- Case Persistence
+- Final Response Generation
+
+### Workflow
+
+```
+Validate Request
+        │
+        ▼
+Trigger Assessment
+        │
+        ▼
+Duplicate Check
+        │
+        ▼
+Customer Context
+        │
+        ▼
+Conversation Context
+        │
+        ▼
+Risk Scoring
+        │
+        ▼
+Routing Decision
+        │
+        ▼
+Holding Response
+        │
+        ▼
+Manager Brief
+        │
+        ▼
+Human Review
+        │
+        ▼
+Notification Dispatch
+        │
+        ▼
+Case Persistence
+        │
+        ▼
+Final Response
+```
+
+### Highlights
+
+- Human-in-the-Loop governance
+- Durable workflow persistence
+- Manager approval queue
+- Risk-based routing
+- Notification orchestration
+- Enterprise auditability
+
 The result is an enterprise-grade architecture that combines **AI orchestration, multilingual communication, durable workflows, human governance, CRM intelligence, and proactive customer engagement** into a unified production-ready platform.
