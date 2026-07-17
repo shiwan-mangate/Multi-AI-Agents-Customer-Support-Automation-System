@@ -1162,3 +1162,393 @@ Business Intelligence
 - Predictive churn analysis
 - Continuous knowledge improvement
 - Business intelligence reporting
+
+# 📂 Project Structure
+
+The project follows a modular **layered enterprise architecture**, where every component owns a single responsibility. Each layer is independently testable, reusable, and extensible, enabling the platform to scale without tightly coupling business logic.
+
+```text
+Multi-AI-Agents-Customer-Support-Automation-System/
+│
+├── api/                          # FastAPI application & API endpoints
+│
+├── core/                         # Dependency injection, configuration, lifecycle
+│
+├── config/                       # Environment & application settings
+│
+├── graph/                        # LangGraph workflow orchestration
+│
+├── layer_0/                      # Input Processing & Language Intelligence
+│
+├── layer_1/                      # AI Supervisor Orchestrator
+│
+├── layer_2/
+│   ├── triage_agent/             # Intelligent Triage Engine
+│   ├── faq_agent/                # Retrieval-Augmented FAQ Agent
+│   ├── refund_agent/             # Refund Automation Agent
+│   ├── account_agent/            # Account Management Agent
+│   └── escalation_agent/         # Human Escalation Workflow
+│
+├── layer_3/
+│   ├── inbound_translation/      # Incoming Translation Pipeline
+│   └── outbound_translation/     # Outgoing Translation Pipeline
+│
+├── crm_agent/                    # CRM Intelligence & Customer Management
+│
+├── proactive_agent/              # Autonomous Customer Success Agent
+│
+├── analytics/                    # Business Analytics & Dashboard Services
+│
+├── database/
+│   ├── models/                   # SQLAlchemy Models
+│   ├── repositories/             # Repository Pattern
+│   ├── migrations/               # Database Migrations
+│   └── postgres/                 # Database Configuration
+│
+├── ai/                           # LLM Services, Embeddings & AI Utilities
+│
+├── prompts/                      # Prompt Templates
+│
+├── schemas/                      # Shared Pydantic Models
+│
+├── services/                     # Shared Business Services
+│
+├── adapters/                     # Layer Communication Adapters
+│
+├── utils/                        # Helper Utilities
+│
+├── tests/
+│   ├── integration/
+│   ├── e2e/
+│   └── fixtures/
+│
+├── images/                       # README Architecture Images
+│
+├── docker-compose.yml
+├── Dockerfile
+├── requirements.txt
+├── .env.example
+└── README.md
+```
+
+---
+
+# 🛠️ Technology Stack
+
+The platform combines modern AI frameworks, enterprise backend technologies, and production-ready infrastructure to deliver scalable, multilingual customer support automation.
+
+---
+
+## 🤖 Artificial Intelligence
+
+| Technology | Purpose |
+|------------|----------|
+| **Groq Llama 3.3 70B** | Large Language Model |
+| **LangGraph** | Multi-Agent Workflow Orchestration |
+| **LangChain** | LLM Framework |
+| **HuggingFace Transformers** | Translation Models |
+| **Helsinki-NLP** | Multilingual Translation |
+| **FastText** | Language Detection |
+| **LangDetect** | Language Detection |
+| **FlashRank** | Context Re-ranking |
+
+---
+
+## ⚙️ Backend
+
+| Technology | Purpose |
+|------------|----------|
+| **Python 3.11+** | Programming Language |
+| **FastAPI** | REST API Framework |
+| **Pydantic** | Data Validation |
+| **Uvicorn** | ASGI Server |
+| **AsyncIO** | Asynchronous Execution |
+
+---
+
+## 🗄️ Database
+
+| Technology | Purpose |
+|------------|----------|
+| **PostgreSQL** | Primary Database |
+| **SQLAlchemy** | ORM |
+| **Alembic** | Database Migrations |
+| **pgvector** | Vector Search |
+| **Neon PostgreSQL** | Cloud Database |
+
+---
+
+## 🧠 AI Infrastructure
+
+| Technology | Purpose |
+|------------|----------|
+| **LangGraph Checkpointer** | Workflow Persistence |
+| **Dependency Injection** | Service Container |
+| **Repository Pattern** | Data Access Layer |
+| **State Machines** | Agent Workflows |
+| **Interrupt API** | Human-in-the-Loop |
+
+---
+
+## 🌍 Deployment
+
+| Technology | Purpose |
+|------------|----------|
+| **Docker** | Containerization |
+| **Docker Compose** | Multi-Service Deployment |
+| **Hugging Face Spaces** | Backend Hosting |
+| **Vercel** | Frontend Hosting |
+| **GitHub Actions** *(Future)* | CI/CD |
+
+---
+
+## 📊 Analytics
+
+| Technology | Purpose |
+|------------|----------|
+| **Dashboard Services** | KPI Generation |
+| **Customer Analytics** | Customer Insights |
+| **Knowledge Gap Analysis** | RAG Improvement |
+| **Churn Detection** | Customer Success |
+| **Agent Performance Analytics** | Operational Metrics |
+
+---
+
+# 🚀 Installation
+
+## 1. Clone the Repository
+
+```bash
+git clone https://github.com/shiwan-mangate/Multi-AI-Agents-Customer-Support-Automation-System.git
+
+cd Multi-AI-Agents-Customer-Support-Automation-System
+```
+
+---
+
+## 2. Create Virtual Environment
+
+### Windows
+
+```bash
+python -m venv venv
+
+venv\Scripts\activate
+```
+
+### Linux / macOS
+
+```bash
+python3 -m venv venv
+
+source venv/bin/activate
+```
+
+---
+
+## 3. Install Dependencies
+
+```bash
+pip install --upgrade pip
+
+pip install -r requirements.txt
+```
+
+---
+
+## 4. Configure Environment Variables
+
+Create a new `.env` file.
+
+```bash
+cp .env.example .env
+```
+
+Update all required environment variables before running the application.
+
+---
+
+## 5. Start PostgreSQL
+
+Ensure PostgreSQL is running and accessible.
+
+Run database migrations if required.
+
+```bash
+alembic upgrade head
+```
+
+---
+
+## 6. Launch the Application
+
+```bash
+uvicorn api.main:app --reload
+```
+
+The API will be available at
+
+```
+http://localhost:8000
+```
+
+Swagger Documentation
+
+```
+http://localhost:8000/docs
+```
+
+Redoc Documentation
+
+```
+http://localhost:8000/redoc
+```
+
+---
+
+# 🐳 Docker Deployment
+
+The entire platform can be deployed using Docker.
+
+---
+
+## Build Docker Image
+
+```bash
+docker build -t enterprise-ai-support .
+```
+
+---
+
+## Run Docker Container
+
+```bash
+docker run -p 8000:8000 enterprise-ai-support
+```
+
+---
+
+## Docker Compose
+
+Start all required services.
+
+```bash
+docker-compose up --build
+```
+
+Run in detached mode.
+
+```bash
+docker-compose up -d
+```
+
+Stop services.
+
+```bash
+docker-compose down
+```
+
+---
+
+## Production Deployment
+
+The backend is containerized using Docker and deployed on **Hugging Face Spaces**, while the frontend is deployed independently on **Vercel**.
+
+| Component | Platform |
+|------------|----------|
+| Backend API | Hugging Face Spaces |
+| Frontend | Vercel |
+| Containerization | Docker |
+| Database | PostgreSQL |
+
+---
+
+# 🔐 Environment Variables
+
+Create a `.env` file in the project root.
+
+Below are the primary environment variables required to run the platform.
+
+```env
+# ===========================
+# LLM Configuration
+# ===========================
+
+GROQ_API_KEY=your_groq_api_key
+
+# ===========================
+# PostgreSQL
+# ===========================
+
+DATABASE_URL=postgresql://username:password@localhost:5432/customer_support_ai
+
+# ===========================
+# Vector Database
+# ===========================
+
+PGVECTOR_DATABASE_URL=postgresql://username:password@localhost:5432/faq_vector_db
+
+# ===========================
+# Hugging Face
+# ===========================
+
+HUGGINGFACEHUB_API_TOKEN=your_token
+
+# ===========================
+# Translation
+# ===========================
+
+DEFAULT_LANGUAGE=en
+
+SUPPORTED_LANGUAGES=en,hi,fr,de,es
+
+# ===========================
+# FastAPI
+# ===========================
+
+HOST=0.0.0.0
+
+PORT=8000
+
+DEBUG=True
+```
+
+> **Note:** Never commit your `.env` file to version control. Keep secrets secure and use environment-specific configuration in production.
+
+---
+
+# ▶️ Running the Platform Locally
+
+After completing the installation steps, start the application with:
+
+```bash
+uvicorn api.main:app --reload
+```
+
+Once the server is running, access the following resources:
+
+| Service | URL |
+|----------|-----|
+| API | http://localhost:8000 |
+| Swagger UI | http://localhost:8000/docs |
+| ReDoc | http://localhost:8000/redoc |
+| Frontend *(Production)* | https://crm-agent-tau.vercel.app/ |
+
+---
+
+## ✅ Local Startup Checklist
+
+- Clone the repository
+- Create and activate a virtual environment
+- Install project dependencies
+- Configure the `.env` file
+- Start PostgreSQL
+- Run database migrations
+- Launch the FastAPI server
+- Open the Swagger documentation
+- Test API endpoints
+- Connect the frontend (optional)
+
+---
+
+With these steps completed, the complete **Enterprise AI-Powered Multi-Agent Customer Support Platform** is ready for local development, testing, and production deployment.
