@@ -1552,3 +1552,387 @@ Once the server is running, access the following resources:
 ---
 
 With these steps completed, the complete **Enterprise AI-Powered Multi-Agent Customer Support Platform** is ready for local development, testing, and production deployment.
+
+# 📡 API Documentation
+
+The platform exposes a RESTful API built with **FastAPI**, providing endpoints for customer support workflows, multilingual processing, CRM intelligence, analytics, and workflow management.
+
+Interactive API documentation is automatically generated using OpenAPI and is available through Swagger UI and ReDoc.
+
+---
+
+## API Base URL
+
+### Local Development
+
+```text
+http://localhost:8000
+```
+
+### Production
+
+```text
+https://<your-huggingface-space-url>.hf.space
+```
+
+---
+
+## Interactive Documentation
+
+| Documentation | URL |
+|--------------|-----|
+| Swagger UI | `/docs` |
+| ReDoc | `/redoc` |
+| OpenAPI JSON | `/openapi.json` |
+
+Example
+
+```text
+http://localhost:8000/docs
+```
+
+---
+
+# Core API Endpoints
+
+## Customer Support
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/webhook` | Main customer support endpoint |
+| POST | `/chat` | Process customer conversations |
+| POST | `/resume` | Resume Human-in-the-Loop workflow |
+| GET | `/health` | Service health check |
+
+---
+
+## CRM
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/crm/customers` | Customer profiles |
+| GET | `/crm/history` | Customer interaction history |
+| POST | `/crm/feedback` | Customer feedback |
+| GET | `/crm/events` | CRM events |
+
+---
+
+## Analytics
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/analytics/dashboard` | Dashboard snapshot |
+| GET | `/analytics/churn` | Churn analytics |
+| GET | `/analytics/agents` | Agent performance |
+| GET | `/analytics/languages` | Language analytics |
+| GET | `/analytics/intents` | Intent analytics |
+
+---
+
+## System
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/health` | Application health |
+| GET | `/metrics` | Platform metrics |
+| GET | `/version` | Application version |
+
+---
+
+# Typical Request Flow
+
+```text
+POST /webhook
+        │
+        ▼
+Layer 0
+Input Processing
+        │
+        ▼
+Language Translation
+        │
+        ▼
+AI Supervisor
+        │
+        ▼
+Triage Engine
+        │
+        ▼
+Specialist Agent
+        │
+        ▼
+Human Review (if required)
+        │
+        ▼
+Outbound Translation
+        │
+        ▼
+CRM Update
+        │
+        ▼
+Customer Response
+```
+
+---
+
+# 🐳 Deployment
+
+The platform has been designed with production deployment in mind and follows a fully containerized architecture.
+
+---
+
+## Production Infrastructure
+
+| Component | Technology |
+|------------|------------|
+| Backend API | FastAPI |
+| AI Framework | LangGraph |
+| LLM | Groq Llama 3.3 |
+| Database | PostgreSQL |
+| Vector Search | pgvector |
+| ORM | SQLAlchemy |
+| Containerization | Docker |
+| Backend Hosting | Hugging Face Spaces |
+| Frontend Hosting | Vercel |
+
+---
+
+## Live Application
+
+### Frontend
+
+👉 https://crm-agent-tau.vercel.app/
+
+### GitHub Repository
+
+👉 https://github.com/shiwan-mangate/Multi-AI-Agents-Customer-Support-Automation-System
+
+---
+
+## Deployment Workflow
+
+```text
+GitHub Repository
+        │
+        ▼
+Docker Build
+        │
+        ▼
+Hugging Face Spaces
+        │
+        ▼
+FastAPI Application
+        │
+        ▼
+LangGraph Runtime
+        │
+        ▼
+PostgreSQL
+        │
+        ▼
+Customer Requests
+```
+
+---
+
+## Deployment Highlights
+
+- Dockerized architecture
+- Stateless API services
+- Persistent PostgreSQL storage
+- Modular service architecture
+- Independent frontend deployment
+- Production-ready configuration
+- Environment-based settings
+
+---
+
+# 🚀 Future Roadmap
+
+Although the platform is production-ready, several enterprise enhancements are planned for future releases.
+
+---
+
+## AI Improvements
+
+- [ ] Multi-LLM Routing
+- [ ] Agent Self-Reflection
+- [ ] Automatic Prompt Optimization
+- [ ] Long-Term Conversational Memory
+- [ ] Tool-Augmented Reasoning
+
+---
+
+## Enterprise Features
+
+- [ ] Role-Based Access Control (RBAC)
+- [ ] OAuth Authentication
+- [ ] Multi-Tenant Support
+- [ ] Customer Organization Management
+- [ ] Fine-Grained Permissions
+
+---
+
+## Infrastructure
+
+- [ ] Redis Distributed Cache
+- [ ] Kafka Event Streaming
+- [ ] Celery Background Workers
+- [ ] Kubernetes Deployment
+- [ ] Horizontal Auto Scaling
+
+---
+
+## Monitoring
+
+- [ ] Prometheus Metrics
+- [ ] Grafana Dashboards
+- [ ] OpenTelemetry Tracing
+- [ ] LangSmith Observability
+- [ ] Distributed Logging
+
+---
+
+## AI Analytics
+
+- [ ] Agent Cost Analytics
+- [ ] Hallucination Detection
+- [ ] Automatic Quality Evaluation
+- [ ] Customer Journey Analytics
+- [ ] Business KPI Forecasting
+
+---
+
+# ⚡ Performance
+
+The platform is engineered around a modular, stateful, and scalable architecture that supports enterprise-grade customer support operations.
+
+---
+
+## Platform Characteristics
+
+| Feature | Capability |
+|----------|------------|
+| Architecture | Layered Multi-Agent System |
+| Workflow Engine | LangGraph |
+| API Framework | FastAPI |
+| State Management | Durable Workflows |
+| Workflow Persistence | PostgreSQL Checkpointer |
+| Translation | Automatic Multilingual Processing |
+| CRM | Event-Driven |
+| Deployment | Docker Containers |
+
+---
+
+## Engineering Highlights
+
+- Stateful workflow orchestration
+- Independent specialist agents
+- Modular service architecture
+- Dependency Injection
+- Repository Pattern
+- Human-in-the-Loop execution
+- Translation memory caching
+- Event-driven CRM synchronization
+- Autonomous proactive intelligence
+- Business analytics pipeline
+
+---
+
+## Designed For
+
+- Enterprise Customer Support
+- SaaS Platforms
+- E-Commerce
+- Banking
+- FinTech
+- Healthcare
+- Telecom
+- Insurance
+- AI Customer Success Platforms
+
+---
+
+# 🤝 Contributing
+
+Contributions are welcome!
+
+If you'd like to improve this project:
+
+1. Fork the repository
+2. Create a feature branch
+
+```bash
+git checkout -b feature/my-feature
+```
+
+3. Commit your changes
+
+```bash
+git commit -m "Add new feature"
+```
+
+4. Push your branch
+
+```bash
+git push origin feature/my-feature
+```
+
+5. Open a Pull Request
+
+Please ensure all new features include appropriate documentation and follow the existing project structure.
+
+---
+
+# 📄 License
+
+This project is licensed under the **MIT License**.
+
+You are free to use, modify, distribute, and build upon this project in accordance with the terms of the MIT License.
+
+For more information, see the [LICENSE](LICENSE) file.
+
+---
+
+# 👨‍💻 Author
+
+<div align="center">
+
+## **Shiwan Mangate**
+
+**Artificial Intelligence Undergraduate**  
+**National Institute of Technology Rourkela**
+
+Passionate about building **Enterprise AI Systems**, **Large Language Model Applications**, **Multi-Agent Architectures**, **Retrieval-Augmented Generation (RAG)**, and **Agentic AI**.
+
+---
+
+### Connect with me
+
+🌐 **GitHub**
+
+https://github.com/shiwan-mangate
+
+💼 **LinkedIn**
+
+> *(Add your LinkedIn profile URL here)*
+
+---
+
+### If you found this project helpful...
+
+⭐ Star this repository
+
+🍴 Fork the project
+
+💡 Share your feedback
+
+🤝 Contribute to future improvements
+
+---
+
+### Thank you for visiting!
+
+*Building intelligent systems that bridge AI research and real-world enterprise applications.*
+
+</div>
