@@ -786,4 +786,343 @@ Final Response
 - Notification orchestration
 - Enterprise auditability
 
+# 🏢 CRM Intelligence Layer
+
+The CRM Intelligence Layer acts as the platform's operational memory.
+
+Rather than simply storing customer information, it continuously captures every completed interaction, updates customer profiles, calculates behavioral metrics, tracks customer satisfaction, and generates business intelligence that powers downstream automation.
+
+Unlike the specialist agents, this layer operates asynchronously after every completed customer interaction and maintains the long-term customer lifecycle.
+
+### Responsibilities
+
+- Customer Profile Management
+- Customer Timeline
+- Interaction History
+- Feedback Processing
+- Event Processing
+- Customer Analytics
+- Churn Score Calculation
+- CRM Event Storage
+- Transcript Management
+
+### Workflow
+
+```
+Completed Specialist Response
+            │
+            ▼
+CRM Event Generation
+            │
+            ▼
+Customer Timeline Update
+            │
+            ▼
+Interaction History Update
+            │
+            ▼
+Customer Profile Update
+            │
+            ▼
+Analytics Generation
+            │
+            ▼
+Churn Score Update
+            │
+            ▼
+Persist to CRM Database
+```
+
+### Data Stored
+
+- Customer Profiles
+- Customer Timeline
+- Ticket History
+- Feedback Records
+- Conversation Transcripts
+- Churn Scores
+- Customer Analytics
+- Processed Events
+
+### Highlights
+
+- Persistent customer memory
+- Event-driven architecture
+- Behavioral analytics
+- Customer lifecycle management
+- Foundation for proactive intelligence
+
+---
+
+# 🚀 Proactive Intelligence Agent
+
+<div align="center">
+
+<img src="images/proactive-agent.png" width="95%">
+
+</div>
+
+---
+
+Unlike traditional customer support systems, the Proactive Agent does not wait for customers to create tickets.
+
+Instead, it continuously monitors CRM data in the background, detects potential business risks, and automatically initiates customer outreach or escalates high-risk cases before customers contact support.
+
+This transforms the platform from reactive support into proactive customer success.
+
+### Responsibilities
+
+- CRM Signal Detection
+- Customer Context Retrieval
+- Signal Analysis
+- Risk Assessment
+- Outreach Decision
+- Personalized Message Generation
+- Escalation Handoff
+- Suppression Policy
+- Automated Outreach
+
+### Workflow
+
+```
+CRM Signal
+      │
+      ▼
+Validate Signal
+      │
+      ▼
+Customer Context
+      │
+      ▼
+Suppression Check
+      │
+      ▼
+Signal Analysis
+      │
+      ▼
+Risk Assessment
+      │
+      ▼
+Outreach Decision
+   ┌──────┴────────┐
+   ▼               ▼
+Generate       Escalation
+Message         Handoff
+   │               │
+   └──────┬────────┘
+          ▼
+    Final Response
+```
+
+### Example Signals
+
+- High Churn Risk
+- VIP Retention Risk
+- Customer Inactivity
+- Negative Customer Experience
+- High-Risk Behavioral Pattern
+
+### Highlights
+
+- Fully asynchronous execution
+- Background CRM scanning
+- Automated customer outreach
+- Escalation integration
+- Enterprise customer retention
+
+---
+
+# 🌍 Inbound Translation Pipeline
+
+<div align="center">
+
+<img src="images/Inbound-pipeline.png" width="95%">
+
+</div>
+
+---
+
+The Inbound Translation Pipeline enables customers to communicate naturally in their preferred language while allowing every AI workflow to operate using standardized English.
+
+It performs language detection, entity protection, secure translation, validation, and translation caching before forwarding a canonical English message to the orchestration engine.
+
+### Responsibilities
+
+- Language Detection
+- Entity Protection
+- Translation
+- Translation Validation
+- Translation Cache
+- English Canonical Generation
+
+### Workflow
+
+```
+Customer Message
+        │
+        ▼
+Language Detection
+        │
+        ▼
+Protect Business Entities
+        │
+        ▼
+Translation Engine
+        │
+        ▼
+Translation Validation
+        │
+        ▼
+Translation Cache
+        │
+        ▼
+Restore Protected Entities
+        │
+        ▼
+Canonical English Message
+```
+
+### Highlights
+
+- Automatic multilingual support
+- Translation memory
+- Translation fallback
+- Secure entity protection
+- Consistent AI input
+
+---
+
+# 🌐 Outbound Translation Pipeline
+
+<div align="center">
+
+<img src="images/outbound-pipeline.png" width="95%">
+
+</div>
+
+---
+
+After specialist agents generate responses in English, the Outbound Translation Pipeline converts them back into the customer's preferred language while preserving dynamic business entities and maintaining conversational quality.
+
+The pipeline ensures that customers always receive personalized responses in their native language.
+
+### Responsibilities
+
+- Entity Protection
+- Translation
+- Translation Validation
+- Translation Cache
+- Personalized Language Delivery
+- CRM Translation Logging
+
+### Workflow
+
+```
+English Response
+        │
+        ▼
+Protect Business Entities
+        │
+        ▼
+Translation Engine
+        │
+        ▼
+Translation Validation
+        │
+        ▼
+Translation Cache
+        │
+        ▼
+Restore Protected Entities
+        │
+        ▼
+Customer Native Language Response
+```
+
+### Highlights
+
+- Native-language customer experience
+- Translation cache
+- Entity preservation
+- CRM synchronization
+- Personalized communication
+
+---
+
+# 📊 Analytics & Business Intelligence Layer
+
+<div align="center">
+
+<img src="images/Analytics service.png" width="95%">
+
+</div>
+
+---
+
+The Analytics Layer transforms operational customer support data into actionable business intelligence.
+
+Instead of providing isolated reports, it aggregates platform-wide information across agents, customer interactions, feedback, translations, and CRM activity to generate executive dashboards and operational KPIs.
+
+### Responsibilities
+
+- Dashboard Generation
+- Agent Performance Analytics
+- Intent Analytics
+- Customer Satisfaction Analytics
+- Language Analytics
+- Churn Analytics
+- Knowledge Gap Detection
+- High-Risk Customer Monitoring
+
+### Workflow
+
+```
+Platform Database
+        │
+        ▼
+Data Aggregation
+        │
+        ▼
+Data Mapping
+        │
+        ▼
+Analytics Engines
+        │
+        ▼
+Business KPIs
+        │
+        ▼
+Executive Dashboard
+```
+
+### Analytics Modules
+
+- Agent Performance
+- Intent Distribution
+- Customer Satisfaction
+- Language Usage
+- Customer Churn
+- Knowledge Gap Analysis
+- High-Risk Customers
+- Operational KPIs
+
+### Dashboard Metrics
+
+- Total Customers
+- Total Tickets
+- Agent Performance
+- Resolution Rate
+- Customer Satisfaction
+- Language Distribution
+- Churn Trends
+- Knowledge Gaps
+
+### Highlights
+
+- Executive dashboard generation
+- Operational intelligence
+- Customer behavior analytics
+- AI performance monitoring
+- Business decision support
+
 The result is an enterprise-grade architecture that combines **AI orchestration, multilingual communication, durable workflows, human governance, CRM intelligence, and proactive customer engagement** into a unified production-ready platform.
